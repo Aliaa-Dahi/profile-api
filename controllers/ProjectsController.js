@@ -14,24 +14,31 @@ const getAllProjects = async (req, res) => {
   });
 };
 
-const getOneProject = async (req, res) => {
-  const { id } = req.params;
-  const project = await Project.findById(id).exec();
+const getOneProject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-  if (project) {
-    res.status(200).json({
+    const project = await Project.findById(id).exec();
+
+    if (!project) {
+      return res.status(404).json({
+        state: 404,
+        status: FAILED,
+        data: { project: null },
+      });
+    }
+
+    return res.status(200).json({
       state: 200,
       status: SUCCESS,
-      data: {
-        project: project,
-      },
+      data: { project },
     });
-  } else {
-    res.status(404).json({
-      state: 404,
-      status: FAILED,
-      data: { project: null },
-    });
+  } catch (err) {
+    console.error("Actual error:", err);
+    console.error("Error name:", err.name);
+    console.error("Error message:", err.message);
+
+    next(err);
   }
 };
 

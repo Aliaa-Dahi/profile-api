@@ -1,12 +1,12 @@
-const { isValidateObjectId } = require("mongoose");
-import { FAILED } from "../utils/httpRequestText.js";
+const {isValidObjectId} = require("mongoose");
+const { FAILED } = require("../utils/httpRequestText.js");
 
 const validateId = (req, res, next) => {
   const { id } = req.params;
-  if (!isValidateObjectId(id)) {
-    res.status(400).json({
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({
       state: 400,
-      statue: FAILED,
+      status: FAILED,
       message: "Invalid ID",
     });
   }

@@ -8,6 +8,7 @@ const {
 } = require("../controllers/ProjectsController");
 const { validateId } = require("../middlewares/validateProjectId");
 
+
 const router = express.Router();
 
 router.get("/", getAllProjects);
