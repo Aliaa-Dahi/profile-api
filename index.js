@@ -5,31 +5,19 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require("express");
 const { log } = require("node:console");
 require("dotenv").config();
-const mongoose = require("mongoose");
 const { router } = require("./routers/projectsRouter.js");
 const { errorHandler } = require("./middlewares/errorHandler.js");
-// const {connect} = require('./db.js');
+const { connect } = require("./data/db.js");
 
 const app = express();
 
 app.use(express.json());
 
 app.use("", router);
-app.use(errorHandler)
+app.use(errorHandler);
 
 // database connection
-const url = process.env.MONGODB_URI;
-
-async function main() {
-  await mongoose
-    .connect(url, {
-      dbName: "profileDB",
-    })
-    .then(() => log("Connected to MongoDB"))
-    .catch((err) => log(err));
-}
-
-main();
+connect();
 
 app.listen(3000, () => {
   log("Server is running on port 3000");
