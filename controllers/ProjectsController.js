@@ -1,8 +1,14 @@
+const { log } = require("node:console");
 const { Project } = require("../models/project.model.js");
 const { SUCCESS, FAILED, ERROR } = require("../utils/httpRequestText.js");
 
 const getAllProjects = async (req, res) => {
-  const projects = await Project.find().exec();
+  const { page, limit } = req.query;
+  const projects = await Project.find()
+    .limit(limit)
+    .skip((page - 1) * limit + 1);
+  log(projects);
+
   res.status(200).json({
     state: 200,
     status: SUCCESS,
