@@ -8,17 +8,16 @@ const {
 } = require("../controllers/ProjectsController");
 const { validateId } = require("../middlewares/validateProjectId");
 
+const projectsRouter = express.Router();
 
-const router = express.Router();
+projectsRouter.get("/", getAllProjects);
 
-router.get("/", getAllProjects);
+projectsRouter.get("/:id", validateId, getOneProject);
 
-router.get("/:id", validateId, getOneProject);
+projectsRouter.post("/", addProject);
 
-router.post("/", addProject);
+projectsRouter.patch("/:id", validateId, editProject);
 
-router.patch("/:id", validateId, editProject);
+projectsRouter.delete("/:id", validateId, deleteProject);
 
-router.delete("/:id", validateId, deleteProject);
-
-module.exports = { router };
+module.exports = { projectsRouter };

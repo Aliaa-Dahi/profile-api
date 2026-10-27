@@ -5,7 +5,7 @@ dns.setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require("express");
 const { log } = require("node:console");
 require("dotenv").config();
-const { router } = require("./routers/projectsRouter.js");
+const { projectsRouter } = require("./routers/projectsRouter.js");
 const { errorHandler } = require("./middlewares/errorHandler.js");
 const { connect } = require("./data/db.js");
 
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("", router);
+app.use("/projects", projectsRouter);
 app.use(errorHandler);
 
 // database connection

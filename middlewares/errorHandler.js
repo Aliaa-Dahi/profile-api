@@ -13,7 +13,6 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  
   return res.status(500).json({
     state: 500,
     status: ERROR,
