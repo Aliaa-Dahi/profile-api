@@ -3,10 +3,14 @@ const { Project } = require("../models/project.model.js");
 const { SUCCESS, FAILED, ERROR } = require("../utils/httpRequestText.js");
 
 const getAllProjects = async (req, res) => {
-  const { page, limit } = req.query;
+  // Default to page 1, limit 10 when no query params are provided
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 4;
+
   const projects = await Project.find()
     .limit(limit)
-    .skip((page - 1) * limit + 1);
+    .skip((page - 1) * limit);
+
   log(projects);
 
   res.status(200).json({
@@ -18,32 +22,24 @@ const getAllProjects = async (req, res) => {
   });
 };
 
-const getOneProject = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+const getOneProject = async (req, res) => {
+  const { id } = req.params;
 
-    const project = await Project.findById(id).exec();
+  const project = await Project.findById(id).exec();
 
-    if (!project) {
-      return res.status(404).json({
-        state: 404,
-        status: FAILED,
-        data: { project: null },
-      });
-    }
-
-    return res.status(200).json({
-      state: 200,
-      status: SUCCESS,
-      data: { project },
+  if (!project) {
+    return res.status(404).json({
+      state: 404,
+      status: FAILED,
+      data: { project: null },
     });
-  } catch (err) {
-    console.error("Actual error:", err);
-    console.error("Error name:", err.name);
-    console.error("Error message:", err.message);
-
-    next(err);
   }
+
+  return res.status(200).json({
+    state: 200,
+    status: SUCCESS,
+    data: { project },
+  });
 };
 
 const addProject = async (req, res) => {
