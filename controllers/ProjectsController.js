@@ -2,7 +2,7 @@ const { Project } = require("../models/project.model.js");
 const { SUCCESS, FAILED, ERROR } = require("../utils/httpRequestText.js");
 
 const getAllProjects = async (req, res) => {
-  const projects = await Project.find({}, { __v: false }).exec();
+  const projects = await Project.find().exec();
   res.status(200).json({
     state: 200,
     status: SUCCESS,
