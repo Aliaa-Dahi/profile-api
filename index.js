@@ -8,12 +8,20 @@ require("dotenv").config();
 const { projectsRouter } = require("./routers/projectsRouter.js");
 const { errorHandler } = require("./middlewares/errorHandler.js");
 const { connect } = require("./data/db.js");
+const { FAILED } = require("./utils/httpRequestText.js");
 
 const app = express();
 
 app.use(express.json());
 
 app.use("/projects", projectsRouter);
+app.use( (req, res) => {
+  res.status(404).json({
+    state: 404,
+    status: FAILED,
+    message: "not found",
+  });
+});
 app.use(errorHandler);
 
 // database connection
