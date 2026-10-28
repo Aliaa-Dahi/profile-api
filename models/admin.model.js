@@ -19,8 +19,6 @@ const AdminSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [6, "Minlenth is 6"],
-      maxlength: [50, "Maxlength is 20"],
     },
   },
   { versionKey: false }

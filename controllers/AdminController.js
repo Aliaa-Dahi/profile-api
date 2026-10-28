@@ -1,7 +1,10 @@
+require("dotenv").config();
 const { log } = require("node:console");
 const { Admin } = require("../models/admin.model");
 const { SUCCESS, FAILED } = require("../utils/httpRequestText");
 const { CustomError } = require("../utils/CustomError");
+const bcrypt = require("bcrypt");
+var jwt = require("jsonwebtoken");
 
 const getAdmin = async (req, res) => {
   const admin = await Admin.find().exec();
@@ -13,8 +16,24 @@ const getAdmin = async (req, res) => {
 };
 
 const createAdmin = async (req, res) => {
-  const admin = new Admin(req.body);
+  const { password, ...rest } = req.body;
+  const existedAdmin = await Admin.findOne({ email: rest.email }).exec();
+  if (existedAdmin) {
+    throw new CustomError("Admin already exists", 400, FAILED);
+  }
+  if (!password || password.length < 6 || password.length > 20) {
+    throw new CustomError(
+      "Password must be between 6 and 20 characters",
+      400,
+      FAILED
+    );
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const admin = new Admin({ ...rest, password: hashedPassword });
   await admin.save();
+
   return res.status(201).json({
     state: 201,
     status: SUCCESS,
@@ -24,6 +43,7 @@ const createAdmin = async (req, res) => {
 
 const updateAdmin = async (req, res) => {
   const { id } = req.params;
+  
   const newAdmin = await Admin.findByIdAndUpdate(
     id,
     { $set: req.body },
@@ -39,18 +59,18 @@ const updateAdmin = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  // findOne returns a single document or null — not an array
-  const admin = await Admin.findOne({ email, password }).exec();
+  // Find by email only, then verify the password with bcrypt
+  const admin = await Admin.findOne({ email }).exec();
 
-  if (!admin) {
+  if (!admin || !(await bcrypt.compare(password, admin.password))) {
     throw new CustomError("Invalid email or password", 401, FAILED);
   }
 
-  log(`Welcome, ${admin.name}`);
+  let token = await jwt.sign({ email, _id: admin._id }, process.env.SECRET_KEY);
   return res.status(200).json({
     state: 200,
     status: SUCCESS,
-    data: { admin },
+    data: { admin, token },
   });
 };
 

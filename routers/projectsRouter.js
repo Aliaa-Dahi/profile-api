@@ -6,7 +6,10 @@ const {
   editProject,
   deleteProject,
 } = require("../controllers/ProjectsController");
+
+//middlewares
 const { validateId } = require("../middlewares/validateId");
+const { verifyToken } = require("../middlewares/verifyToken");
 
 const projectsRouter = express.Router();
 
@@ -14,10 +17,10 @@ projectsRouter.get("/", getAllProjects);
 
 projectsRouter.get("/:id", validateId, getOneProject);
 
-projectsRouter.post("/", addProject);
+projectsRouter.post("/",verifyToken, addProject);
 
-projectsRouter.patch("/:id", validateId, editProject);
+projectsRouter.patch("/:id", validateId, verifyToken, editProject);
 
-projectsRouter.delete("/:id", validateId, deleteProject);
+projectsRouter.delete("/:id", validateId,verifyToken, deleteProject);
 
 module.exports = { projectsRouter };

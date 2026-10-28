@@ -12,14 +12,17 @@ const {
 //helpers
 const { validateId } = require("../middlewares/validateId.js");
 
+//middlewares
+const { verifyToken } = require("../middlewares/verifyToken.js");
+
 //get admin
 adminRouter.get("/", getAdmin);
 
 //create admin
-adminRouter.post("/", createAdmin);
+adminRouter.post("/", verifyToken, createAdmin);
 
 //update admin
-adminRouter.patch("/:id", validateId, updateAdmin);
+adminRouter.patch("/:id", validateId, verifyToken, updateAdmin);
 
 //login
 adminRouter.post("/login", login);
