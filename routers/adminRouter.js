@@ -16,7 +16,7 @@ const { validateId } = require("../middlewares/validateId.js");
 const { verifyToken } = require("../middlewares/verifyToken.js");
 
 //get admin
-adminRouter.get("/:id", getAdmin);
+adminRouter.get("/:email", getAdmin);
 
 //create admin
 adminRouter.post("/", verifyToken, createAdmin);

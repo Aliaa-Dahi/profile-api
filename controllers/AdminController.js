@@ -7,7 +7,9 @@ const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 
 const getAdmin = async (req, res) => {
-  const admin = await Admin.findById(req.params.id).select("-password").exec();
+  const admin = await Admin.find({ email: req.params.email })
+    .select("-password")
+    .exec();
 
   if (!admin) throw new CustomError("Admin not found", 404, FAILED);
 
