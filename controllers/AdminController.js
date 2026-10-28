@@ -43,14 +43,13 @@ const createAdmin = async (req, res) => {
 
 const updateAdmin = async (req, res) => {
   const { id } = req.params;
-  
   const newAdmin = await Admin.findByIdAndUpdate(
     id,
     { $set: req.body },
     { returnDocument: "after" }
   );
-  res.status(200).json({
-    state: 200,
+  res.status(201).json({
+    state: 201,
     status: SUCCESS,
     data: newAdmin,
   });

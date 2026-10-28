@@ -17,10 +17,10 @@ projectsRouter.get("/", getAllProjects);
 
 projectsRouter.get("/:id", validateId, getOneProject);
 
-projectsRouter.post("/",verifyToken, addProject);
+projectsRouter.post("/", verifyToken, addProject);
 
 projectsRouter.patch("/:id", validateId, verifyToken, editProject);
 
-projectsRouter.delete("/:id", validateId,verifyToken, deleteProject);
+projectsRouter.delete("/:id", validateId, verifyToken, deleteProject);
 
 module.exports = { projectsRouter };

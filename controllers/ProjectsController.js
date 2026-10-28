@@ -1,6 +1,7 @@
-const { log } = require("node:console");
 const { Project } = require("../models/project.model.js");
 const { SUCCESS, FAILED, ERROR } = require("../utils/httpRequestText.js");
+const { CustomError } = require("../utils/CustomError.js");
+const { log } = require("node:console");
 
 const getAllProjects = async (req, res) => {
   // Default to page 1, limit 10 when no query params are provided
@@ -10,8 +11,6 @@ const getAllProjects = async (req, res) => {
   const projects = await Project.find()
     .limit(limit)
     .skip((page - 1) * limit);
-
-  log(projects);
 
   res.status(200).json({
     state: 200,
@@ -27,13 +26,8 @@ const getOneProject = async (req, res) => {
 
   const project = await Project.findById(id).exec();
 
-  if (!project) {
-    return res.status(404).json({
-      state: 404,
-      status: FAILED,
-      data: { project: null },
-    });
-  }
+  log(project);
+  if (!project) throw new CustomError("Project not found", 404, FAILED);
 
   return res.status(200).json({
     state: 200,
@@ -57,31 +51,30 @@ const addProject = async (req, res) => {
 const editProject = async (req, res) => {
   let { id } = req.params;
   let oldProject = await Project.findById(id).exec();
-  if (!oldProject) {
-    return res.status(404).json({
-      state: 404,
-      message: "Project not found",
-    });
-  } else {
-    const project = await Project.findByIdAndUpdate(
-      id,
-      { $set: { ...req.body } },
-      {
-        returnDocument: "after",
-      }
-    );
-    res.status(203).json({
-      state: 203,
-      status: SUCCESS,
-      data: {
-        project: project,
-      },
-    });
-  }
+  if (!oldProject) throw new CustomError("Project not found", 404, FAILED);
+
+  const project = await Project.findByIdAndUpdate(
+    id,
+    { $set: { ...req.body } },
+    {
+      returnDocument: "after",
+    }
+  );
+
+  res.status(203).json({
+    state: 203,
+    status: SUCCESS,
+    data: {
+      project: project,
+    },
+  });
 };
 
 const deleteProject = async (req, res) => {
   const { id } = req.params;
+  const oldProject = await Project.findById(id).exec();
+  if (!oldProject) throw new CustomError("Project not found", 404, FAILED);
+
   await Project.findByIdAndDelete(id);
   res.status(201).json({
     state: 201,
