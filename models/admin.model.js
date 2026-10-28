@@ -5,23 +5,57 @@ const AdminSchema = new Schema(
     name: {
       type: String,
       required: [true, "Name is required"],
+      trim: true,
     },
     email: {
       type: String,
       required: [true, "Email is required"],
-      validate: {
-        validator: function (email) {
-          return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
-        },
-        message: "Invalid email",
-      },
+      trim: true,
+      match: [
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        "Please enter a valid email address",
+      ],
     },
     password: {
       type: String,
       required: [true, "Password is required"],
     },
+    title: {
+      type: String,
+      trim: true,
+      required: [true, "Title is required"],
+    },
+    skills: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+    },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+      trim: true,
+    },
+    profileImage: {
+      type: String,
+      trim: true,
+    },
+    github: {
+      type: String,
+      trim: true,
+    },
+    linkedIn: {
+      type: String,
+      trim: true,
+    },
+    resumeUrl: {
+      type: String,
+      trim: true,
+    },
   },
-  { versionKey: false }
+  { versionKey: false, timestamp: true }
 );
 
 const Admin = model("Admin", AdminSchema);
