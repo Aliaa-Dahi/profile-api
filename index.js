@@ -1,13 +1,21 @@
+//dns problem
 const dns = require("node:dns");
-
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
+//packages
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { log } = require("node:console");
-require("dotenv").config();
+
+//routes
 const { projectsRouter } = require("./routers/projectsRouter.js");
+const { adminRouter } = require("./routers/adminRouter.js");
+
+//middlewares
 const { errorHandler } = require("./middlewares/errorHandler.js");
+
+//helpers
 const { connect } = require("./data/db.js");
 const { FAILED } = require("./utils/httpRequestText.js");
 
@@ -17,6 +25,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/projects", projectsRouter);
+app.use("/admin", adminRouter);
 
 // Non found route handler
 app.use((req, res) => {

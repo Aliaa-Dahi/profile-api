@@ -6,7 +6,7 @@ const {
   editProject,
   deleteProject,
 } = require("../controllers/ProjectsController");
-const { validateId } = require("../middlewares/validateProjectId");
+const { validateId } = require("../middlewares/validateId");
 
 const projectsRouter = express.Router();
 
