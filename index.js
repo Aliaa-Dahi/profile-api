@@ -41,6 +41,6 @@ app.use(errorHandler);
 // database connection
 connect();
 
-app.listen(3000, () => {
+app.listen(4300, () => {
   log("Server is running on port 3000");
 });

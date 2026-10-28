@@ -17,10 +17,6 @@ const getAdmin = async (req, res) => {
 
 const createAdmin = async (req, res) => {
   const { password, ...rest } = req.body;
-  const existedAdmin = await Admin.findOne({ email: rest.email }).exec();
-  if (existedAdmin) {
-    throw new CustomError("Admin already exists", 400, FAILED);
-  }
   if (!password || password.length < 6 || password.length > 20) {
     throw new CustomError(
       "Password must be between 6 and 20 characters",
