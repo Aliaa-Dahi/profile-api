@@ -41,7 +41,6 @@ const projectSchema = new Schema(
     thumbnail: {
       type: String,
       trim: true,
-      match: [URL_REGEX, "Thumbnail must be a valid URL starting with http:// or https://"],
     },
 
     liveUrl: {
@@ -79,27 +78,9 @@ const projectSchema = new Schema(
 
     status: {
       type: String,
-      required: [true, "Status is required"],
       enum: {
         values: ["In Progress", "Completed", "On Hold", "Archived"],
         message: "Status must be one of: In Progress, Completed, On Hold, Archived",
-      },
-    },
-
-    startDate: {
-      type: Date,
-      required: [true, "Start date is required"],
-    },
-
-    completionDate: {
-      type: Date,
-      validate: {
-        validator: function (value) {
-          // Only validate if both dates exist
-          if (!value || !this.startDate) return true;
-          return value >= this.startDate;
-        },
-        message: "Completion date must be on or after the start date",
       },
     },
 
