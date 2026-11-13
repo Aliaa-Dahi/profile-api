@@ -42,5 +42,5 @@ app.use(errorHandler);
 connect();
 
 app.listen(4300, () => {
-  log("Server is running on port 3000");
+  log("Server is running on port 4300");
 });

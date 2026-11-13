@@ -15,7 +15,7 @@ const projectsRouter = express.Router();
 
 projectsRouter.get("/", getAllProjects);
 
-projectsRouter.get("/:id", validateId, getOneProject);
+projectsRouter.get("/:slug", getOneProject);
 
 projectsRouter.post("/", verifyToken, addProject);
 

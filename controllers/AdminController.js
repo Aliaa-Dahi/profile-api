@@ -32,25 +32,36 @@ const createAdmin = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const admin = new Admin({ ...rest, password: hashedPassword });
-  await admin.save();
+  try {
+    const admin = new Admin({ ...rest, password: hashedPassword });
+    await admin.save();
 
-  return res.status(201).json({
-    state: 201,
-    status: SUCCESS,
-    data: admin,
-  });
+    return res.status(201).json({
+      state: 201,
+      status: SUCCESS,
+      data: admin,
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      throw new CustomError("An admin with this email already exists", 409, FAILED);
+    }
+    throw err;
+  }
 };
 
 const updateAdmin = async (req, res) => {
   const { id } = req.params;
+
+  // Never allow password to be updated through this endpoint
+  const { password, ...safeBody } = req.body;
+
   const newAdmin = await Admin.findByIdAndUpdate(
     id,
-    { $set: req.body },
+    { $set: safeBody },
     { returnDocument: "after" }
   );
-  res.status(201).json({
-    state: 201,
+  res.status(200).json({
+    state: 200,
     status: SUCCESS,
     data: newAdmin,
   });

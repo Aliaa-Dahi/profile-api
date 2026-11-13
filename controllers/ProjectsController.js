@@ -4,29 +4,35 @@ const { CustomError } = require("../utils/CustomError.js");
 const { log } = require("node:console");
 
 const getAllProjects = async (req, res) => {
-  // Default to page 1, limit 10 when no query params are provided
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 4;
 
-  const projects = await Project.find()
-    .limit(limit)
-    .skip((page - 1) * limit);
+  const [projects, total] = await Promise.all([
+    Project.find()
+      .sort({ displayOrder: 1, createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit),
+    Project.countDocuments(),
+  ]);
 
   res.status(200).json({
     state: 200,
     status: SUCCESS,
     data: {
-      projects: projects,
+      projects,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   });
 };
 
 const getOneProject = async (req, res) => {
-  const { id } = req.params;
+  const { slug } = req.params;
 
-  const project = await Project.findById(id).exec();
+  const project = await Project.findOne({ slug }).exec();
 
-  log(project);
   if (!project) throw new CustomError("Project not found", 404, FAILED);
 
   return res.status(200).json({
